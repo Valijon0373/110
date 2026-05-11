@@ -164,14 +164,12 @@ export default function Teachers({ dark }) {
     if (!row?.id) return
 
     const fio = editDraft.fio.trim()
-    const login = editDraft.login.trim()
-    const password = editDraft.password.trim()
-    if (!fio || !login || !password) return
+    if (!fio) return
 
     setRows((prev) =>
       prev.map((r) =>
         r.id === row.id
-          ? { ...r, fakultet: editDraft.fakultet, kafedra: editDraft.kafedra, fio, login, password }
+          ? { ...r, fakultet: editDraft.fakultet, kafedra: editDraft.kafedra, fio }
           : r
       )
     )
@@ -354,8 +352,6 @@ export default function Teachers({ dark }) {
               <div><p className={`text-xs font-semibold ${meta}`}>Kafedra:</p><p className="mt-1 font-semibold">{modal.row.kafedra}</p></div>
               <div><p className={`text-xs font-semibold ${meta}`}>F.I.O:</p><p className="mt-1 font-semibold">{modal.row.fio}</p></div>
               <div><p className={`text-xs font-semibold ${meta}`}>Login:</p><p className="mt-1 font-semibold">{modal.row.login}</p></div>
-              <div><p className={`text-xs font-semibold ${meta}`}>Parol:</p><p className="mt-1 font-semibold">{modal.row.password}</p></div>
-              <div><p className={`text-xs font-semibold ${meta}`}>ID:</p><p className="mt-1 font-semibold">{modal.row.id}</p></div>
             </div>
           </div>
         )}
@@ -372,8 +368,6 @@ export default function Teachers({ dark }) {
               <div className="space-y-2"><label className="text-base font-semibold">Fakultet</label><select value={editDraft.fakultet} onChange={(e) => setEditDraft((p) => ({ ...p, fakultet: e.target.value }))} className={`w-full rounded-lg border px-4 py-3 text-base outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${selectInput}`}>{FAKULTETLAR.map((item) => <option key={item} value={item}>{item}</option>)}</select></div>
               <div className="space-y-2"><label className="text-base font-semibold">Kafedra</label><select value={editDraft.kafedra} onChange={(e) => setEditDraft((p) => ({ ...p, kafedra: e.target.value }))} className={`w-full rounded-lg border px-4 py-3 text-base outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${selectInput}`}>{KAFEDRALAR.map((item) => <option key={item} value={item}>{item}</option>)}</select></div>
               <div className="space-y-2"><label className="text-base font-semibold">F.I.O</label><input value={editDraft.fio} onChange={(e) => setEditDraft((p) => ({ ...p, fio: e.target.value }))} className={`w-full rounded-lg border px-4 py-3 text-base outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`} /></div>
-              <div className="space-y-2"><label className="text-base font-semibold">Login</label><input value={editDraft.login} onChange={(e) => setEditDraft((p) => ({ ...p, login: e.target.value }))} className={`w-full rounded-lg border px-4 py-3 text-base outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`} /></div>
-              <div className="space-y-2"><label className="text-base font-semibold">Parol</label><input type="password" value={editDraft.password} onChange={(e) => setEditDraft((p) => ({ ...p, password: e.target.value }))} className={`w-full rounded-lg border px-4 py-3 text-base outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`} /></div>
             </div>
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <button type="button" onClick={onSaveEdit} className="inline-flex min-w-[11rem] items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-base font-bold text-white transition-colors hover:bg-emerald-600">Saqlash</button>
