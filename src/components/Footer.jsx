@@ -1,6 +1,6 @@
 import { Facebook, Instagram, Send, Youtube } from "lucide-react"
 
-const iconSvgClass = "h-6 w-6 shrink-0"
+const iconSvgClass = "h-4 w-4 shrink-0"
 const iconProps = {
   className: iconSvgClass,
   strokeWidth: 1.5,
@@ -36,9 +36,9 @@ const FOOTER_SOCIAL = [
 
 export default function Footer({ creditLine = "UrSPI | RTTM Jamosi | 2026" }) {
   return (
-    <footer className="relative z-10 mt-auto w-full rounded-t-3xl border-t border-white/25 bg-white/10 py-10 shadow-[0_-8px_32px_rgba(0,0,0,0.12)] backdrop-blur-xl">
+    <footer className="relative z-10 mt-auto w-full rounded-t-3xl border-t border-white/25 bg-white/10 py-6 shadow-[0_-8px_32px_rgba(0,0,0,0.12)] backdrop-blur-xl">
       <div className="mx-auto flex max-w-xl flex-col items-center justify-center px-4 text-center">
-        <div className="mb-5 flex flex-wrap items-center justify-center gap-5 sm:gap-6">
+        <div className="mb-3 flex flex-wrap items-center justify-center gap-4 sm:gap-5">
           {FOOTER_SOCIAL.map((item) => (
             <a
               key={item.name}
@@ -46,7 +46,7 @@ export default function Footer({ creditLine = "UrSPI | RTTM Jamosi | 2026" }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={item.name}
-              className={`flex h-11 w-11 items-center justify-center rounded-full border border-white text-white drop-shadow-sm duration-200 transition-colors hover:bg-white/10 ${item.hoverClass}`}
+              className={`flex h-9 w-9 items-center justify-center rounded-full border border-white text-white drop-shadow-sm duration-200 transition-colors hover:bg-white/10 ${item.hoverClass}`}
             >
               {item.icon}
             </a>

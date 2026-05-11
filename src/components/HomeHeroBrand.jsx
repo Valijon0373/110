@@ -45,7 +45,7 @@ function WelcomeTypewriter() {
 
   return (
     <p
-      className="relative min-h-[2.75rem] max-w-xl text-center text-2xl font-semibold tracking-tight text-white drop-shadow-sm sm:min-h-[3.25rem] sm:text-3xl"
+      className="relative -mt-2 min-h-[2.75rem] max-w-xl text-center text-2xl font-semibold tracking-tight text-white drop-shadow-sm sm:-mt-3 sm:min-h-[3.25rem] sm:text-3xl"
       aria-label={WELCOME_FULL}
       aria-live="off"
     >
@@ -94,7 +94,7 @@ export default function HomeHeroBrand() {
           <span className="inline-block rounded-[0.14em] px-[0.02em]">0</span>
         </span>
         <div
-          className="pointer-events-none absolute left-1/2 top-[calc(50%+1em)] z-10 flex w-[108%] max-w-[min(100%,42rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center bg-white py-[0.22em] shadow-[0_0_0_1px_rgba(43,89,173,0.08)]"
+          className="pointer-events-none absolute left-1/2 top-[48%] z-10 flex w-[108%] max-w-[min(100%,42rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center bg-white py-[0.22em] shadow-[0_0_0_1px_rgba(43,89,173,0.08)]"
           aria-hidden
         >
           <span
