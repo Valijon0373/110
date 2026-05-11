@@ -708,7 +708,7 @@ function KafedralarPanel({ dark }) {
                 <CircleX className={`h-7 w-7 ${dark ? "text-white" : "text-slate-900"}`} strokeWidth={2.25} aria-hidden />
               </button>
             </div>
-            <div className="space-y-3 text-sm">
+            <div className="space-y-3 text-base">
               <div>
                 <p className={`text-xs font-semibold ${meta}`}>Fakultet:</p>
                 <p className="mt-1 font-semibold">{modal.row.fakultet}</p>
@@ -737,25 +737,29 @@ function KafedralarPanel({ dark }) {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Fakultet</label>
+                <label className="text-base font-semibold">Fakultet</label>
                 <select
                   value={editDraft.fakultet}
                   onChange={(e) => setEditDraft((p) => ({ ...p, fakultet: e.target.value }))}
-                  className={`w-full rounded-lg border px-4 py-3 text-sm outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`}
+                  className={`w-full rounded-lg border px-4 py-3 text-base outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`}
                 >
                   {fakultetOptions.map((opt) => (
-                    <option key={opt} value={opt}>
+                    <option
+                      key={opt}
+                      value={opt}
+                      className={dark ? "bg-slate-800 text-slate-100" : "bg-white text-slate-900"}
+                    >
                       {opt}
                     </option>
                   ))}
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Kafedra nomi</label>
+                <label className="text-base font-semibold">Kafedra nomi</label>
                 <input
                   value={editDraft.nameUz}
                   onChange={(e) => setEditDraft((p) => ({ ...p, nameUz: e.target.value }))}
-                  className={`w-full rounded-lg border px-4 py-3 text-sm outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`}
+                  className={`w-full rounded-lg border px-4 py-3 text-base outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`}
                 />
               </div>
             </div>
@@ -764,14 +768,14 @@ function KafedralarPanel({ dark }) {
               <button
                 type="button"
                 onClick={onSaveEdit}
-                className="inline-flex min-w-[11rem] items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-emerald-600"
+                className="inline-flex min-w-[11rem] items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-base font-bold text-white transition-colors hover:bg-emerald-600"
               >
                 Saqlash
               </button>
               <button
                 type="button"
                 onClick={closeModal}
-                className={`inline-flex min-w-[11rem] items-center justify-center rounded-full border px-6 py-3 text-sm font-bold transition-colors ${
+                className={`inline-flex min-w-[11rem] items-center justify-center rounded-full border px-6 py-3 text-base font-bold transition-colors ${
                   dark ? "border-slate-600 text-slate-200 hover:bg-slate-700/70" : "border-slate-200 text-slate-800 hover:bg-slate-50"
                 }`}
               >
@@ -829,25 +833,29 @@ function KafedralarPanel({ dark }) {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Fakultet</label>
+                <label className="text-base font-semibold">Fakultet</label>
                 <select
                   value={createDraft.fakultet}
                   onChange={(e) => setCreateDraft((p) => ({ ...p, fakultet: e.target.value }))}
-                  className={`w-full rounded-lg border px-4 py-3 text-sm outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`}
+                  className={`w-full rounded-lg border px-4 py-3 text-base outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`}
                 >
                   {fakultetOptions.map((opt) => (
-                    <option key={opt} value={opt}>
+                    <option
+                      key={opt}
+                      value={opt}
+                      className={dark ? "bg-slate-800 text-slate-100" : "bg-white text-slate-900"}
+                    >
                       {opt}
                     </option>
                   ))}
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Kafedra nomi</label>
+                <label className="text-base font-semibold">Kafedra nomi</label>
                 <input
                   value={createDraft.nameUz}
                   onChange={(e) => setCreateDraft((p) => ({ ...p, nameUz: e.target.value }))}
-                  className={`w-full rounded-lg border px-4 py-3 text-sm outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`}
+                  className={`w-full rounded-lg border px-4 py-3 text-base outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`}
                   placeholder="Masalan: Rus tili va adabiyoti kafedrasi"
                 />
               </div>
@@ -857,14 +865,14 @@ function KafedralarPanel({ dark }) {
               <button
                 type="button"
                 onClick={onSaveCreate}
-                className="inline-flex min-w-[11rem] items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-emerald-600"
+                className="inline-flex min-w-[11rem] items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-base font-bold text-white transition-colors hover:bg-emerald-600"
               >
                 Qo&apos;shish
               </button>
               <button
                 type="button"
                 onClick={closeModal}
-                className={`inline-flex min-w-[11rem] items-center justify-center rounded-full border px-6 py-3 text-sm font-bold transition-colors ${
+                className={`inline-flex min-w-[11rem] items-center justify-center rounded-full border px-6 py-3 text-base font-bold transition-colors ${
                   dark ? "border-slate-600 text-slate-200 hover:bg-slate-700/70" : "border-slate-200 text-slate-800 hover:bg-slate-50"
                 }`}
               >
@@ -1074,7 +1082,7 @@ function FakultetlarPanel({ dark }) {
                 <CircleX className={`h-7 w-7 ${dark ? "text-white" : "text-slate-900"}`} strokeWidth={2.25} aria-hidden />
               </button>
             </div>
-            <div className="space-y-3 text-sm">
+            <div className="space-y-3 text-base">
               <div>
                 <p className={`text-xs font-semibold ${label}`}>Fakultet nomi:</p>
                 <p className="mt-1 font-semibold">{modal.fac.nameUz}</p>
@@ -1099,11 +1107,11 @@ function FakultetlarPanel({ dark }) {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-semibold">Fakultet nomi</label>
+                <label className="text-base font-semibold">Fakultet nomi</label>
                 <input
                   value={editDraft.nameUz}
                   onChange={(e) => setEditDraft((p) => ({ ...p, nameUz: e.target.value }))}
-                  className={`w-full rounded-lg border px-4 py-3 text-sm outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`}
+                  className={`w-full rounded-lg border px-4 py-3 text-base outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`}
                 />
               </div>
             </div>
@@ -1112,14 +1120,14 @@ function FakultetlarPanel({ dark }) {
               <button
                 type="button"
                 onClick={onSaveEdit}
-                className="inline-flex min-w-[11rem] items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-emerald-600"
+                className="inline-flex min-w-[11rem] items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-base font-bold text-white transition-colors hover:bg-emerald-600"
               >
                 Saqlash
               </button>
               <button
                 type="button"
                 onClick={closeModal}
-                className={`inline-flex min-w-[11rem] items-center justify-center rounded-full border px-6 py-3 text-sm font-bold transition-colors ${
+                className={`inline-flex min-w-[11rem] items-center justify-center rounded-full border px-6 py-3 text-base font-bold transition-colors ${
                   dark ? "border-slate-600 text-slate-200 hover:bg-slate-700/70" : "border-slate-200 text-slate-800 hover:bg-slate-50"
                 }`}
               >
@@ -1176,11 +1184,11 @@ function FakultetlarPanel({ dark }) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold">Fakultet nomi</label>
+              <label className="text-base font-semibold">Fakultet nomi</label>
               <input
                 value={createDraft.nameUz}
                 onChange={(e) => setCreateDraft({ nameUz: e.target.value })}
-                className={`w-full rounded-lg border px-4 py-3 text-sm outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`}
+                className={`w-full rounded-lg border px-4 py-3 text-base outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${input}`}
                 placeholder="Masalan: Filologiya Fakulteti"
               />
             </div>
@@ -1189,14 +1197,14 @@ function FakultetlarPanel({ dark }) {
               <button
                 type="button"
                 onClick={onSaveCreate}
-                className="inline-flex min-w-[11rem] items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-emerald-600"
+                className="inline-flex min-w-[11rem] items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-base font-bold text-white transition-colors hover:bg-emerald-600"
               >
                 Qo&apos;shish
               </button>
               <button
                 type="button"
                 onClick={closeModal}
-                className={`inline-flex min-w-[11rem] items-center justify-center rounded-full border px-6 py-3 text-sm font-bold transition-colors ${
+                className={`inline-flex min-w-[11rem] items-center justify-center rounded-full border px-6 py-3 text-base font-bold transition-colors ${
                   dark ? "border-slate-600 text-slate-200 hover:bg-slate-700/70" : "border-slate-200 text-slate-800 hover:bg-slate-50"
                 }`}
               >
@@ -1276,7 +1284,7 @@ function Modal({ open, onClose, dark, children }) {
       <div
         role="dialog"
         aria-modal="true"
-        className={`relative z-10 w-full max-w-lg rounded-2xl border p-6 shadow-xl ${
+        className={`relative z-10 w-full max-w-lg rounded-2xl border p-6 text-lg shadow-xl ${
           dark ? "border-slate-700 bg-slate-800 text-slate-100" : "border-slate-200 bg-white text-slate-900"
         }`}
       >
