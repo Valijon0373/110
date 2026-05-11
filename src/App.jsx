@@ -549,6 +549,8 @@ function App() {
           activePage={activePage}
           onNavigate={setActivePage}
           currentUser={currentUser}
+          logoSrc={logoImg}
+          logoAlt="Urganch DPI logo"
           userRoleLabel={currentUser ? ROLE_LABELS[currentUser.role] : ""}
           onLogout={() => setCurrentUser(null)}
           onOpenLogin={() => setLoginOpen(true)}
