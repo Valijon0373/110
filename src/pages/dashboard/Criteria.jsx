@@ -1,16 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import {
   ChevronDown,
-  ChevronRight,
   ChevronUp,
   CircleCheck,
   CircleX,
   Eye,
-  FileText,
-  Filter,
   FolderPlus,
   Pencil,
   Plus,
+  SlidersHorizontal,
   Trash2,
 } from "lucide-react"
 import { CATEGORY_MAX, CRITERIA, DEMO_CRITERIA_EVAL } from "../../data/criteria.js"
@@ -117,45 +115,14 @@ function Modal({ open, onClose, dark, children }) {
   )
 }
 
-function ScoreBar({ dark, value, max }) {
-  const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0
-  return (
-    <div className={`mt-1.5 h-2 overflow-hidden rounded-full ${dark ? "bg-slate-700" : "bg-slate-200"}`}>
-      <div className="h-full rounded-full bg-teal-500 transition-[width] duration-300" style={{ width: `${pct}%` }} />
-    </div>
-  )
-}
-
-function StatusBadge({ dark, status }) {
-  const approved = status === "approved"
-  return (
-    <span
-      className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
-        approved
-          ? dark
-            ? "bg-emerald-500/20 text-emerald-300"
-            : "bg-emerald-100 text-emerald-800"
-          : dark
-            ? "bg-amber-500/20 text-amber-200"
-            : "bg-amber-100 text-amber-900"
-      }`}
-    >
-      {approved ? "Tasdiqlangan" : "Tekshirilmoqda"}
-    </span>
-  )
-}
-
 export default function Criteria({ dark }) {
   const initial = useMemo(() => loadSnapshot(), [])
   const [sections, setSections] = useState(() => initial.sections)
   const [criteria, setCriteria] = useState(() => initial.criteria)
 
-  const [openSection, setOpenSection] = useState(() => initial.sections[0]?.id ?? "")
+  const [openSection, setOpenSection] = useState("")
   const [showAllInSection, setShowAllInSection] = useState(() => ({}))
-  const [sectionDraft, setSectionDraft] = useState("all")
-  const [statusDraft, setStatusDraft] = useState("all")
   const [sectionFilter, setSectionFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
 
   const [createModalOpen, setCreateModalOpen] = useState(false)
   const [createDraft, setCreateDraft] = useState({
@@ -175,9 +142,31 @@ export default function Criteria({ dark }) {
   const [notice, setNotice] = useState({ open: false, message: "" })
   const noticeTimeoutRef = useRef(/** @type {ReturnType<typeof setTimeout> | null} */ (null))
 
+  const [actionsMenu, setActionsMenu] = useState(/** @type {{ key: string, top: number, left: number } | null} */ (null))
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ sections, criteria }))
   }, [sections, criteria])
+
+  useEffect(() => {
+    if (!actionsMenu) return
+    const onMouseDown = (e) => {
+      const t = /** @type {Node | null} */ (e.target)
+      if (t && typeof (/** @type {Element} */ (t)).closest === "function" && (/** @type {Element} */ (t)).closest("[data-criterion-actions]")) {
+        return
+      }
+      setActionsMenu(null)
+    }
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setActionsMenu(null)
+    }
+    document.addEventListener("mousedown", onMouseDown)
+    window.addEventListener("keydown", onKeyDown)
+    return () => {
+      document.removeEventListener("mousedown", onMouseDown)
+      window.removeEventListener("keydown", onKeyDown)
+    }
+  }, [actionsMenu])
 
   const rows = criteria
 
@@ -194,10 +183,9 @@ export default function Criteria({ dark }) {
   const filteredRows = useMemo(() => {
     return rows.filter((r) => {
       if (sectionFilter !== "all" && r.sectionId !== sectionFilter) return false
-      if (statusFilter !== "all" && r.status !== statusFilter) return false
       return true
     })
-  }, [rows, sectionFilter, statusFilter])
+  }, [rows, sectionFilter])
 
   const bySectionId = useMemo(() => {
     const map = {}
@@ -206,11 +194,6 @@ export default function Criteria({ dark }) {
     })
     return map
   }, [filteredRows, sections])
-
-  const applyFilters = () => {
-    setSectionFilter(sectionDraft)
-    setStatusFilter(statusDraft)
-  }
 
   const toggleSection = (sectionId) => {
     setOpenSection((prev) => (prev === sectionId ? "" : sectionId))
@@ -267,6 +250,28 @@ export default function Criteria({ dark }) {
       setNotice({ open: false, message: "" })
       noticeTimeoutRef.current = null
     }, 1300)
+  }
+
+  const criterionActionsKey = (sectionId, rowId) => `${sectionId}:${rowId}`
+
+  const toggleCriterionActionsMenu = (e, sectionId, rowId) => {
+    const key = criterionActionsKey(sectionId, rowId)
+    if (actionsMenu?.key === key) {
+      setActionsMenu(null)
+      return
+    }
+    const rect = e.currentTarget.getBoundingClientRect()
+    const menuWidth = 256
+    const centered = rect.left + rect.width / 2 - menuWidth / 2
+    const left = Math.min(Math.max(8, centered), window.innerWidth - menuWidth - 8)
+    setActionsMenu({ key, top: rect.bottom + 6, left })
+  }
+
+  const deleteCriterionRow = (rowId) => {
+    if (!window.confirm("Bu mezonni o'chirishni tasdiqlaysizmi?")) return
+    setCriteria((prev) => prev.filter((c) => c.id !== rowId))
+    setActionsMenu(null)
+    showNotice("Mezon o'chirildi")
   }
 
   const onSaveCriterion = () => {
@@ -333,7 +338,6 @@ export default function Criteria({ dark }) {
       return next
     })
     setCriteria((prev) => prev.filter((c) => c.sectionId !== id))
-    setSectionDraft((d) => (d === id ? "all" : d))
     setSectionFilter((f) => (f === id ? "all" : f))
     setDeleteSectionTarget(null)
     showNotice("Bo'lim o'chirildi")
@@ -348,9 +352,9 @@ export default function Criteria({ dark }) {
           <div className="min-w-0">
             <h2 className={`text-xl font-bold tracking-tight ${titleClr}`}>Mezonlar</h2>
             <p className={`mt-1 max-w-2xl text-sm leading-relaxed ${subtitle}`}>
-              Avval <span className={`font-semibold ${titleClr}`}>Bo&apos;lim qo&apos;shish</span> bilan yangi bo&apos;lim yarating, keyin uning ichiga{" "}
-              <span className={`font-semibold ${titleClr}`}>Mezon qo&apos;shish</span> yoki bo&apos;lim ochilganda{" "}
-              <span className={`font-semibold ${titleClr}`}>Bu bo&apos;limga mezon qo&apos;shish</span> orqali qator qo&apos;shing.
+              Avval <span className={`font-semibold ${titleClr}`}>Bo'lim qo'shish</span> bilan yangi bo'lim yarating, keyin uning ichiga{" "}
+              <span className={`font-semibold ${titleClr}`}>Mezon qo'shish</span> yoki bo'lim ochilganda{" "}
+              <span className={`font-semibold ${titleClr}`}>Bu bo'limga mezon qo'shish</span> orqali qator qo'shing.
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-2">
@@ -362,7 +366,7 @@ export default function Criteria({ dark }) {
               }`}
             >
               <FolderPlus className="h-4 w-4 shrink-0 stroke-[2.5]" aria-hidden />
-              Bo&apos;lim qo&apos;shish
+              Bo'lim qo'shish
             </button>
             <button
               type="button"
@@ -371,50 +375,30 @@ export default function Criteria({ dark }) {
               className={`inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-600 disabled:pointer-events-none disabled:opacity-50 ${TEAL_BG}`}
             >
               <Plus className="h-4 w-4 shrink-0 stroke-[2.5]" aria-hidden />
-              Mezon qo&apos;shish
+              Mezon qo'shish
             </button>
           </div>
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           <select
-            value={sectionDraft}
-            onChange={(e) => setSectionDraft(e.target.value)}
+            value={sectionFilter}
+            onChange={(e) => setSectionFilter(e.target.value)}
             className={`w-full min-w-[11rem] rounded-lg border px-3 py-2.5 text-sm outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 sm:w-auto ${selectInput}`}
           >
-            <option value="all">Barcha bo&apos;limlar</option>
+            <option value="all">Barcha bo'limlar</option>
             {sections.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.title}
               </option>
             ))}
           </select>
-          <select
-            value={statusDraft}
-            onChange={(e) => setStatusDraft(e.target.value)}
-            className={`w-full min-w-[11rem] rounded-lg border px-3 py-2.5 text-sm outline-none ring-teal-500/0 transition-shadow focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 sm:w-auto ${selectInput}`}
-          >
-            <option value="all">Barcha statuslar</option>
-            <option value="approved">Tasdiqlangan</option>
-            <option value="pending">Tekshirilmoqda</option>
-          </select>
-          <button
-            type="button"
-            onClick={applyFilters}
-            className={`inline-flex items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-semibold transition-colors sm:shrink-0 ${
-              dark ? "border-teal-500 text-teal-300 hover:bg-slate-700/70" : "border-teal-600 text-teal-700 hover:bg-teal-50"
-            }`}
-          >
-            <Filter className="h-4 w-4" strokeWidth={2} aria-hidden />
-            Filtr
-          </button>
         </div>
 
         <div className="space-y-3">
           {sections.map((sec, idx) => {
             const sectionRows = bySectionId[sec.id] ?? []
             const catMax = sec.maxScore
-            const catCollected = sectionRows.reduce((s, r) => s + r.collected, 0)
             const isOpen = openSection === sec.id
             const showAll = showAllInSection[sec.id]
             const visibleRows =
@@ -446,7 +430,7 @@ export default function Criteria({ dark }) {
                   </button>
                   <div className="shrink-0 self-center text-right">
                     <p className={`text-sm font-bold tabular-nums leading-none ${titleClr}`}>
-                      {catCollected} / {catMax}
+                      Maks.Ball: {catMax}
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-1">
@@ -494,21 +478,19 @@ export default function Criteria({ dark }) {
                         }`}
                       >
                         <Plus className="h-4 w-4 shrink-0 stroke-[2.5]" aria-hidden />
-                        Bu bo&apos;limga mezon qo&apos;shish
+                        Bu bo'limga mezon qo'shish
                       </button>
                     </div>
 
                     {sectionRows.length > 0 ? (
                       <div className="overflow-x-auto">
-                        <table className={`min-w-[720px] w-full border-collapse text-sm ${dark ? "border-slate-700" : "border-slate-200"}`}>
+                        <table className={`min-w-[520px] w-full border-collapse text-sm ${dark ? "border-slate-700" : "border-slate-200"}`}>
                           <thead className={dark ? "bg-slate-900/40" : "bg-slate-50"}>
                             <tr>
                               <th className={`border px-3 py-3 text-left font-bold ${dark ? "border-slate-600" : "border-slate-200"} ${titleClr}`}>№</th>
                               <th className={`border px-3 py-3 text-left font-bold ${dark ? "border-slate-600" : "border-slate-200"} ${titleClr}`}>Mezon nomi</th>
                               <th className={`border px-3 py-3 text-center font-bold ${dark ? "border-slate-600" : "border-slate-200"} ${titleClr}`}>Maks. ball</th>
-                              <th className={`border px-3 py-3 text-left font-bold ${dark ? "border-slate-600" : "border-slate-200"} ${titleClr}`}>Yig&apos;ilgan ball</th>
-                              <th className={`border px-3 py-3 text-center font-bold ${dark ? "border-slate-600" : "border-slate-200"} ${titleClr}`}>Status</th>
-                              <th className={`border px-3 py-3 text-right font-bold ${dark ? "border-slate-600" : "border-slate-200"} ${titleClr}`}>Amallar</th>
+                              <th className={`border px-3 py-3 text-center font-bold ${dark ? "border-slate-600" : "border-slate-200"} ${titleClr}`}>Amallar</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -524,43 +506,22 @@ export default function Criteria({ dark }) {
                                   <td className={`border px-3 py-3 text-center font-semibold tabular-nums ${dark ? "border-slate-600" : "border-slate-200"} ${titleClr}`}>
                                     {row.maxScore}
                                   </td>
-                                  <td className={`border px-3 py-3 ${dark ? "border-slate-600" : "border-slate-200"}`}>
-                                    <span className={`text-sm font-semibold tabular-nums ${titleClr}`}>
-                                      {row.collected} / {row.maxScore}
-                                    </span>
-                                    <ScoreBar dark={dark} value={row.collected} max={row.maxScore} />
-                                  </td>
-                                  <td className={`border px-3 py-3 text-center ${dark ? "border-slate-600" : "border-slate-200"}`}>
-                                    <StatusBadge dark={dark} status={row.status} />
-                                  </td>
-                                  <td className={`border px-3 py-3 ${dark ? "border-slate-600" : "border-slate-200"}`}>
-                                    <div className="flex justify-end gap-1.5">
+                                  <td className={`border px-3 py-3 text-center align-middle ${dark ? "border-slate-600" : "border-slate-200"}`}>
+                                    <div className="flex items-center justify-center">
                                       <button
                                         type="button"
-                                        title="Ko'rish"
-                                        className={`rounded-lg border p-2 transition-colors ${
-                                          dark ? "border-slate-600 text-slate-200 hover:bg-slate-700/70" : "border-slate-300 text-slate-700 hover:bg-slate-100"
+                                        data-criterion-actions
+                                        aria-expanded={actionsMenu?.key === criterionActionsKey(sec.id, row.id)}
+                                        aria-haspopup="menu"
+                                        aria-label="Amallar menyusi"
+                                        onClick={(e) => toggleCriterionActionsMenu(e, sec.id, row.id)}
+                                        className={`rounded-lg border p-2 shadow-sm transition-colors ${
+                                          dark
+                                            ? "border-slate-500 bg-slate-700/80 text-slate-100 hover:bg-slate-600"
+                                            : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
                                         }`}
                                       >
-                                        <Eye className="h-4 w-4" strokeWidth={2} aria-hidden />
-                                      </button>
-                                      <button
-                                        type="button"
-                                        title="Hujjatlar"
-                                        className={`rounded-lg border p-2 transition-colors ${
-                                          dark ? "border-slate-600 text-slate-200 hover:bg-slate-700/70" : "border-slate-300 text-slate-700 hover:bg-slate-100"
-                                        }`}
-                                      >
-                                        <FileText className="h-4 w-4" strokeWidth={2} aria-hidden />
-                                      </button>
-                                      <button
-                                        type="button"
-                                        title="Batafsil"
-                                        className={`rounded-lg border p-2 transition-colors ${
-                                          dark ? "border-slate-600 text-slate-200 hover:bg-slate-700/70" : "border-slate-300 text-slate-700 hover:bg-slate-100"
-                                        }`}
-                                      >
-                                        <ChevronRight className="h-4 w-4" strokeWidth={2} aria-hidden />
+                                        <SlidersHorizontal className="h-4 w-4" strokeWidth={2} aria-hidden />
                                       </button>
                                     </div>
                                   </td>
@@ -572,7 +533,7 @@ export default function Criteria({ dark }) {
                       </div>
                     ) : (
                       <div className={`px-4 py-8 text-center text-sm ${subtitle}`}>
-                        Bu bo&apos;limda filtr bo&apos;yicha mezon topilmadi. Yangi qator qo&apos;shish uchun yuqoridagi tugmadan foydalaning.
+                        Bu bo'limda mezon topilmadi. Yangi qator qo'shish uchun yuqoridagi tugmadan foydalaning.
                       </div>
                     )}
 
@@ -587,12 +548,12 @@ export default function Criteria({ dark }) {
                         >
                           {showAll ? (
                             <>
-                              Kamroq ko&apos;rsatish
+                              Kamroq ko'rsatish
                               <ChevronUp className="h-4 w-4" aria-hidden />
                             </>
                           ) : (
                             <>
-                              Barcha mezonlarni ko&apos;rish ({sectionRows.length})
+                              Barcha mezonlarni ko'rish ({sectionRows.length})
                               <ChevronDown className="h-4 w-4" aria-hidden />
                             </>
                           )}
@@ -607,14 +568,14 @@ export default function Criteria({ dark }) {
         </div>
 
         {sections.length === 0 && (
-          <p className={`text-center text-sm ${subtitle}`}>Hozircha bo&apos;lim yo&apos;q. «Bo&apos;lim qo&apos;shish» dan boshlang.</p>
+          <p className={`text-center text-sm ${subtitle}`}>Hozircha bo'lim yo'q. «Bo'lim qo'shish» dan boshlang.</p>
         )}
       </div>
 
       <Modal open={createModalOpen} onClose={closeCreateModal} dark={dark}>
         <div className="space-y-5">
           <div className="flex items-start justify-between gap-4">
-            <h3 className="text-2xl font-bold tracking-tight">Mezon qo&apos;shish</h3>
+            <h3 className="text-2xl font-bold tracking-tight">Mezon qo'shish</h3>
             <button
               type="button"
               onClick={closeCreateModal}
@@ -626,7 +587,7 @@ export default function Criteria({ dark }) {
           </div>
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-base font-semibold">Bo&apos;lim</label>
+              <label className="text-base font-semibold">Bo'lim</label>
               <select
                 value={createDraft.sectionId || firstSectionId}
                 onChange={(e) => setCreateDraft((p) => ({ ...p, sectionId: e.target.value }))}
@@ -684,7 +645,7 @@ export default function Criteria({ dark }) {
         <div className="space-y-5">
           <div className="flex items-start justify-between gap-4">
             <h3 className="text-2xl font-bold tracking-tight">
-              {editingSectionId ? "Bo&apos;limni tahrirlash" : "Bo&apos;lim yaratish"}
+              {editingSectionId ? "Bo'limni tahrirlash" : "Bo'lim yaratish"}
             </h3>
             <button
               type="button"
@@ -697,7 +658,7 @@ export default function Criteria({ dark }) {
           </div>
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-base font-semibold">Bo&apos;lim nomi</label>
+              <label className="text-base font-semibold">Bo'lim nomi</label>
               <input
                 value={sectionFormDraft.title}
                 onChange={(e) => setSectionFormDraft((p) => ({ ...p, title: e.target.value }))}
@@ -706,7 +667,7 @@ export default function Criteria({ dark }) {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-base font-semibold">Bo&apos;lim uchun jami maks. ball</label>
+              <label className="text-base font-semibold">Bo'lim uchun jami maks. ball</label>
               <input
                 type="number"
                 min={1}
@@ -740,7 +701,7 @@ export default function Criteria({ dark }) {
       <Modal open={!!deleteSectionTarget} onClose={() => setDeleteSectionTarget(null)} dark={dark}>
         <div className="space-y-5">
           <div className="flex items-start justify-between gap-4">
-            <h3 className="text-2xl font-bold tracking-tight">Bo&apos;limni o&apos;chirish</h3>
+            <h3 className="text-2xl font-bold tracking-tight">Bo'limni o'chirish</h3>
             <button
               type="button"
               onClick={() => setDeleteSectionTarget(null)}
@@ -751,8 +712,8 @@ export default function Criteria({ dark }) {
             </button>
           </div>
           <p className={`text-base leading-relaxed ${subtitle}`}>
-            <span className={`font-semibold ${titleClr}`}>{deleteSectionTarget?.title}</span> bo&apos;limini o&apos;chirishni tasdiqlaysizmi? Bu bo&apos;limga
-            tegishli barcha mezonlar ham ro&apos;yxatdan olib tashlanadi (
+            <span className={`font-semibold ${titleClr}`}>{deleteSectionTarget?.title}</span> bo'limini o'chirishni tasdiqlaysizmi? Bu bo'limga
+            tegishli barcha mezonlar ham ro'yxatdan olib tashlanadi (
             {deleteSectionTarget ? criteriaCountForSection(deleteSectionTarget.id) : 0} ta).
           </p>
           <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -761,7 +722,7 @@ export default function Criteria({ dark }) {
               onClick={confirmDeleteSection}
               className="inline-flex min-w-[11rem] items-center justify-center rounded-full bg-red-600 px-6 py-3 text-base font-bold text-white transition-colors hover:bg-red-700"
             >
-              O&apos;chirish
+              O'chirish
             </button>
             <button
               type="button"
@@ -775,6 +736,58 @@ export default function Criteria({ dark }) {
           </div>
         </div>
       </Modal>
+
+      {actionsMenu && (
+        <div
+          data-criterion-actions
+          role="menu"
+          className={`fixed z-[80] min-w-[16rem] overflow-hidden rounded-xl border py-1 shadow-xl ring-1 ${
+            dark ? "border-slate-600 bg-slate-800 ring-white/10" : "border-slate-200 bg-white ring-black/5"
+          }`}
+          style={{ top: actionsMenu.top, left: actionsMenu.left }}
+        >
+          <button
+            type="button"
+            role="menuitem"
+            data-criterion-actions
+            className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium transition-colors ${
+              dark ? "text-blue-400 hover:bg-slate-700/70" : "text-blue-600 hover:bg-blue-50/90"
+            }`}
+            onClick={() => setActionsMenu(null)}
+          >
+            <Eye className="h-4 w-4 shrink-0 stroke-[2]" aria-hidden />
+            Ko'rish
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            data-criterion-actions
+            className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium transition-colors ${
+              dark ? "text-emerald-400 hover:bg-slate-700/70" : "text-emerald-800 hover:bg-emerald-50/90"
+            }`}
+            onClick={() => setActionsMenu(null)}
+          >
+            <Pencil className="h-4 w-4 shrink-0 stroke-[2]" aria-hidden />
+            Tahrirlash
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            data-criterion-actions
+            className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium transition-colors ${
+              dark ? "text-red-400 hover:bg-red-950/50" : "text-red-800 hover:bg-red-50"
+            }`}
+            onClick={() => {
+              const idx = actionsMenu.key.indexOf(":")
+              const rowId = idx === -1 ? "" : actionsMenu.key.slice(idx + 1)
+              if (rowId) deleteCriterionRow(rowId)
+            }}
+          >
+            <Trash2 className="h-4 w-4 shrink-0 stroke-[2]" aria-hidden />
+            O'chirish
+          </button>
+        </div>
+      )}
 
       {notice.open && (
         <div className="pointer-events-none fixed left-1/2 top-4 z-[60] w-[min(92vw,34rem)] -translate-x-1/2">
