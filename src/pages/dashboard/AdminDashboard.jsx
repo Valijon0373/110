@@ -1,13 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import {
   ChevronDown,
+  GraduationCap,
+  Landmark,
   LogOut,
   Menu,
   Moon,
+  Users as UsersIcon,
 } from "lucide-react"
 import { Link } from "react-router-dom"
 import logoImg from "../../assets/logo.jpg"
 import DashboardNav, { getDashboardNavLabel } from "../../components/dashboard/DashboardNav"
+import EvaluationSummaryCards from "../../components/dashboard/EvaluationSummaryCards"
 import Faculties from "./Faculties"
 import Departments from "./Departments"
 import Positions from "./Positions"
@@ -24,14 +28,12 @@ const STATS = {
   kafedralar: 15,
   foydalanuvchilar: 302,
   oqituvchilar: 0,
-  mezonlar: 0,
 }
 
 const ENTITY_COLORS = {
   fakultetlar: "#3b82f6",
   kafedralar: "#10b981",
   oqituvchilar: "#8b5cf6",
-  mezonlar: "#f59e0b",
 }
 
 const MAVJUD_FAKULTETLAR = [
@@ -202,7 +204,6 @@ export default function AdminDashboard() {
       { key: "fakultetlar", label: "Fakultetlar", value: STATS.fakultetlar, color: ENTITY_COLORS.fakultetlar },
       { key: "kafedralar", label: "Kafedralar", value: STATS.kafedralar, color: ENTITY_COLORS.kafedralar },
       { key: "oqituvchilar", label: "O'qituvchilar", value: STATS.oqituvchilar, color: ENTITY_COLORS.oqituvchilar },
-      { key: "mezonlar", label: "Mezonlar", value: STATS.mezonlar, color: ENTITY_COLORS.mezonlar },
     ],
     []
   )
@@ -348,30 +349,65 @@ export default function AdminDashboard() {
           <div className="mx-auto w-full max-w-6xl">
             {activeNav === "dashboard" && (
               <div className="space-y-6">
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <EvaluationSummaryCards dark={dark} />
+
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   <article
                     className={`rounded-xl border p-5 shadow-sm ${dark ? "border-slate-700 bg-slate-800" : "border-slate-100 bg-white"}`}
                   >
-                    <p className={`text-sm ${dark ? "text-slate-400" : "text-slate-500"}`}>Fakultetlar</p>
-                    <p className="mt-2 text-3xl font-bold text-blue-600">{STATS.fakultetlar}</p>
+                    <div className="flex items-start gap-4">
+                      <div
+                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${
+                          dark ? "bg-blue-500/15 text-blue-400" : "bg-blue-50 text-blue-600"
+                        }`}
+                      >
+                        <Landmark className="h-6 w-6" strokeWidth={2} aria-hidden />
+                      </div>
+                      <div className="min-w-0">
+                        <p className={`text-sm ${dark ? "text-slate-400" : "text-slate-500"}`}>Fakultetlar</p>
+                        <p className={`mt-2 text-3xl font-bold tabular-nums ${dark ? "text-blue-400" : "text-blue-600"}`}>
+                          {STATS.fakultetlar}
+                        </p>
+                      </div>
+                    </div>
                   </article>
                   <article
                     className={`rounded-xl border p-5 shadow-sm ${dark ? "border-slate-700 bg-slate-800" : "border-slate-100 bg-white"}`}
                   >
-                    <p className={`text-sm ${dark ? "text-slate-400" : "text-slate-500"}`}>Kafedralar</p>
-                    <p className="mt-2 text-3xl font-bold text-emerald-600">{STATS.kafedralar}</p>
+                    <div className="flex items-start gap-4">
+                      <div
+                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${
+                          dark ? "bg-emerald-500/15 text-emerald-400" : "bg-emerald-50 text-emerald-600"
+                        }`}
+                      >
+                        <GraduationCap className="h-6 w-6" strokeWidth={2} aria-hidden />
+                      </div>
+                      <div className="min-w-0">
+                        <p className={`text-sm ${dark ? "text-slate-400" : "text-slate-500"}`}>Kafedralar</p>
+                        <p className={`mt-2 text-3xl font-bold tabular-nums ${dark ? "text-emerald-400" : "text-emerald-600"}`}>
+                          {STATS.kafedralar}
+                        </p>
+                      </div>
+                    </div>
                   </article>
                   <article
                     className={`rounded-xl border p-5 shadow-sm ${dark ? "border-slate-700 bg-slate-800" : "border-slate-100 bg-white"}`}
                   >
-                    <p className={`text-sm ${dark ? "text-slate-400" : "text-slate-500"}`}>O&apos;qituvchilar</p>
-                    <p className="mt-2 text-3xl font-bold text-violet-600">{STATS.oqituvchilar}</p>
-                  </article>
-                  <article
-                    className={`rounded-xl border p-5 shadow-sm ${dark ? "border-slate-700 bg-slate-800" : "border-slate-100 bg-white"}`}
-                  >
-                    <p className={`text-sm ${dark ? "text-slate-400" : "text-slate-500"}`}>Mezonlar</p>
-                    <p className="mt-2 text-3xl font-bold text-blue-600">{STATS.mezonlar}</p>
+                    <div className="flex items-start gap-4">
+                      <div
+                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${
+                          dark ? "bg-violet-500/15 text-violet-400" : "bg-violet-50 text-violet-600"
+                        }`}
+                      >
+                        <UsersIcon className="h-6 w-6" strokeWidth={2} aria-hidden />
+                      </div>
+                      <div className="min-w-0">
+                        <p className={`text-sm ${dark ? "text-slate-400" : "text-slate-500"}`}>O&apos;qituvchilar</p>
+                        <p className={`mt-2 text-3xl font-bold tabular-nums ${dark ? "text-violet-400" : "text-violet-600"}`}>
+                          {STATS.oqituvchilar}
+                        </p>
+                      </div>
+                    </div>
                   </article>
                 </div>
 

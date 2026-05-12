@@ -5,8 +5,7 @@ import logoImg from "./assets/logo.jpg"
 import Footer from "./components/Footer.jsx"
 import HomeHeroBrand from "./components/HomeHeroBrand.jsx"
 import Navbar from "./components/Navbar.jsx"
-
-const TOTAL_MAX_SCORE = 110
+import { CATEGORY_MAX, CRITERIA, TOTAL_MAX_SCORE } from "./data/criteria.js"
 
 const USERS = [
   { id: "u-admin", fullName: "Platforma Admin", role: "admin", login: "admin", password: "12345" },
@@ -25,15 +24,6 @@ const ROLE_LABELS = {
   expert: "Ekspert/Tekshiruvchi",
 }
 
-const CATEGORY_MAX = {
-  "O'qituvchilik faoliyati": 20,
-  "Metodik ishlar": 20,
-  "Tarbiyaviy faoliyat": 20,
-  "Ilmiy faoliyat": 30,
-  "OTM rivojiga hissa": 10,
-  "Shaxsiy fazilatlar": 10,
-}
-
 const ROLE_VISIBLE_CATEGORIES = {
   admin: Object.keys(CATEGORY_MAX),
   dean: Object.keys(CATEGORY_MAX),
@@ -41,169 +31,6 @@ const ROLE_VISIBLE_CATEGORIES = {
   teacher: Object.keys(CATEGORY_MAX),
   head: ["O'qituvchilik faoliyati", "Metodik ishlar", "Tarbiyaviy faoliyat"],
 }
-
-const CRITERIA = [
-  {
-    id: "c-1-1",
-    category: "O'qituvchilik faoliyati",
-    title: "Nazariy-amaliy bilimlar va ochiq darslar",
-    description: "Ochiq darslar asosida zamonaviy fan tendensiyalarini qo'llash darajasi.",
-    maxScore: 8,
-    requiredDocs: ["Ochiq dars jadvali", "Taqdimot", "Bayonnoma", "Foto/video"],
-  },
-  {
-    id: "c-1-2",
-    category: "O'qituvchilik faoliyati",
-    title: "Talabalar so'rovnomasi bo'yicha o'qitish sifati",
-    description: "Talabalar fikri va anonim so'rovnoma natijalari.",
-    maxScore: 5,
-    requiredDocs: ["So'rovnoma natijasi", "Tahlil hujjati"],
-  },
-  {
-    id: "c-1-3",
-    category: "O'qituvchilik faoliyati",
-    title: "Talabalar olimpiada/tanlov/grantdagi ishtiroki",
-    description: "Ustoz-shogird tizimida tayyorlangan talabalar natijalari.",
-    maxScore: 7,
-    requiredDocs: ["Buyruq nusxasi", "Diplom/sertifikat", "Nashr havolasi"],
-  },
-  {
-    id: "c-2-1",
-    category: "Metodik ishlar",
-    title: "Darslik va o'quv qo'llanmalar",
-    description: "Yakka mualliflik yoki hammualliflikdagi nashrlar.",
-    maxScore: 8,
-    requiredDocs: ["Guvohnoma", "ISBN ma'lumot", "Nashr nusxasi"],
-  },
-  {
-    id: "c-2-2",
-    category: "Metodik ishlar",
-    title: "AKTdan foydalanish va o'quv materiallari",
-    description: "HEMIS faoliyati va videodars/taqdimotlar sifati.",
-    maxScore: 7,
-    requiredDocs: ["HEMIS skrinshot", "Videodars", "Topshiriqlar ro'yxati"],
-  },
-  {
-    id: "c-2-3",
-    category: "Metodik ishlar",
-    title: "Zamonaviy pedagogik texnologiyalar",
-    description: "PISA/PIRLS/TIMSS/STEAM yoki innovatsion metodlar joriy etilishi.",
-    maxScore: 5,
-    requiredDocs: ["Metodik qo'llanma", "Mashg'ulot ishlanmasi"],
-  },
-  {
-    id: "c-3-1",
-    category: "Tarbiyaviy faoliyat",
-    title: "Ma'naviy-ma'rifiy va sport tadbirlari",
-    description: "Fakultet/institut miqyosidagi tadbirlar tashkiloti.",
-    maxScore: 6,
-    requiredDocs: ["Ma'lumotnoma", "Foto", "Dastur"],
-  },
-  {
-    id: "c-3-2",
-    category: "Tarbiyaviy faoliyat",
-    title: "Kuratorlik faoliyati",
-    description: "Biriktirilgan akademik guruhlar bilan ishlash natijalari.",
-    maxScore: 5,
-    requiredDocs: ["Farmoyish", "Bayonnoma", "Foto hisobot"],
-  },
-  {
-    id: "c-3-3",
-    category: "Tarbiyaviy faoliyat",
-    title: "Talabalar bo'sh vaqtini tashkil etish",
-    description: "TTJ va ustoz-shogird asosidagi faollik.",
-    maxScore: 5,
-    requiredDocs: ["Reja", "Sertifikat", "Bayonnoma"],
-  },
-  {
-    id: "c-3-4",
-    category: "Tarbiyaviy faoliyat",
-    title: "Jamoatchilik ishlari va OAVdagi chiqishlar",
-    description: "Davlat/jamoat tashkilotlari bilan hamkorlikdagi ishtirok.",
-    maxScore: 4,
-    requiredDocs: ["Ma'lumotnoma", "Foto", "Media havola"],
-  },
-  {
-    id: "c-4-1",
-    category: "Ilmiy faoliyat",
-    title: "Ilmiy konferensiyalar",
-    description: "Scopus/Web of Science va xalqaro-respublika konferensiyalari.",
-    maxScore: 10,
-    requiredDocs: ["Maqola/tezis", "Indeksatsiya havolasi"],
-  },
-  {
-    id: "c-4-2",
-    category: "Ilmiy faoliyat",
-    title: "Ilmiy nashrlar va monografiyalar",
-    description: "Monografiya, OAK va yuqori impakt-faktorli jurnallar.",
-    maxScore: 5,
-    requiredDocs: ["Maqola PDF", "Monografiya nusxasi", "ISBN/DOI"],
-  },
-  {
-    id: "c-4-3",
-    category: "Ilmiy faoliyat",
-    title: "Loyihalar va tijoratlashtirish",
-    description: "Innovatsion loyihalar va shartnomaviy ishlarda ishtirok.",
-    maxScore: 4,
-    requiredDocs: ["Shartnoma", "Kafedra ma'lumotnomasi"],
-  },
-  {
-    id: "c-4-4",
-    category: "Ilmiy faoliyat",
-    title: "Patent va mualliflik guvohnomalari",
-    description: "Ixtiro, dasturiy mahsulot va mualliflik huquqi hujjatlari.",
-    maxScore: 3,
-    requiredDocs: ["Patent guvohnomasi", "Mualliflik hujjati"],
-  },
-  {
-    id: "c-4-5",
-    category: "Ilmiy faoliyat",
-    title: "Dissertatsiya va ilmiy rahbarlik",
-    description: "Opponentlik, himoya, ilmiy maslahat va tadqiqot natijalari.",
-    maxScore: 8,
-    requiredDocs: ["Avtoreferat", "Diplom", "OAK e'loni"],
-  },
-  {
-    id: "c-5-1",
-    category: "OTM rivojiga hissa",
-    title: "Ta'lim muassasalari hamkorligi",
-    description: "Uzviylik va trening/seminarlarni tashkil etish.",
-    maxScore: 3,
-    requiredDocs: ["Reja", "Seminar dasturi", "Xulosa"],
-  },
-  {
-    id: "c-5-2",
-    category: "OTM rivojiga hissa",
-    title: "Xorijiy OTMlar bilan almashinuv",
-    description: "Top-1000 OTMlar bilan hamkorlik loyihalari.",
-    maxScore: 4,
-    requiredDocs: ["Memorandum", "Taklifnoma", "Buyruq"],
-  },
-  {
-    id: "c-5-3",
-    category: "OTM rivojiga hissa",
-    title: "Yangi yo'nalish va ARM bazasi",
-    description: "Yangi yo'nalish/laboratoriya ochish hamda ARMni boyitish.",
-    maxScore: 3,
-    requiredDocs: ["Tasdiqlovchi hujjat", "ARM ma'lumotnomasi"],
-  },
-  {
-    id: "c-6-1",
-    category: "Shaxsiy fazilatlar",
-    title: "Ilmiy daraja va unvon",
-    description: "Fan doktori, PhD, dotsent va ilmiy unvonlar.",
-    maxScore: 3,
-    requiredDocs: ["Diplom nusxasi"],
-  },
-  {
-    id: "c-6-2",
-    category: "Shaxsiy fazilatlar",
-    title: "Malaka oshirish va til/stajirovka",
-    description: "Malaka oshirish, xorijiy tillar va stajirovka natijalari.",
-    maxScore: 7,
-    requiredDocs: ["Sertifikat", "Seminar bayonnomasi", "Dalolatnoma"],
-  },
-]
 
 const STORAGE_KEYS = {
   submissions: "nizom_submissions_v2",
@@ -607,7 +434,6 @@ function App() {
                     </p>
                   </div>
                   <h3 className="mt-3 text-lg font-semibold text-slate-900">{criterion.title}</h3>
-                  <p className="mt-1 text-sm text-slate-600">{criterion.description}</p>
 
                   <div className="mt-3 rounded-xl bg-slate-50 p-3">
                     <p className="text-xs font-semibold uppercase text-slate-500">Kerakli hujjatlar</p>
